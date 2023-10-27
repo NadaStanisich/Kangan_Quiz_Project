@@ -9,6 +9,8 @@ app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id
 app.MapGet("/questions", () => getQuestions()); //get all questions.
 app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //get all questions with correct option.
 
+app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
+
 app.Run();
 
 Questions getQuestion(int id) {
@@ -57,6 +59,24 @@ List<Questions> getQuestionsWithCorrectOption() {
     } catch (Exception ex) {
         Console.WriteLine($"An error occurred: {ex.Message}");
         return null;
+    }
+}
+
+bool checkUser(string username) {
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand($"SELECT * FROM \"Users\" WHERE \"userName\" = '{username}'", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+        reader.Read();
+        if (reader.HasRows) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return false;
     }
 }
 
