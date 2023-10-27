@@ -9,42 +9,55 @@ app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id
 app.MapGet("/questions", () => getQuestions()); //get all questions.
 app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //get all questions with correct option.
 
-
 app.Run();
 
-  
 Questions getQuestion(int id) {
-    using var connection = getDbConnection();
-    connection.Open();
-    using var command = new NpgsqlCommand($"SELECT * FROM \"Quizzes\" WHERE \"id\" = {id}", connection);
-    using NpgsqlDataReader reader = command.ExecuteReader();
-    reader.Read();
-    var question = new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)});
-    return question;
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand($"SELECT * FROM \"Quizzes\" WHERE \"id\" = {id}", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+        reader.Read();
+        var question = new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)});
+        return question;
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
+    }
 }
 
 List<Questions> getQuestions() {
-    using var connection = getDbConnection();
-    connection.Open();
-    using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\"", connection);
-    using NpgsqlDataReader reader = command.ExecuteReader();
-    var questions = new List<Questions>();
-    while (reader.Read()) {
-        questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)}));
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\"", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+        var questions = new List<Questions>();
+        while (reader.Read()) {
+            questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)}));
+        }
+        return questions;
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
     }
-    return questions;
 }
 
 List<Questions> getQuestionsWithCorrectOption() {
-    using var connection = getDbConnection();
-    connection.Open();
-    using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\"", connection);
-    using NpgsqlDataReader reader = command.ExecuteReader();
-    var questions = new List<Questions>();
-    while (reader.Read()) {
-        questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(5)}));
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\"", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+        var questions = new List<Questions>();
+        while (reader.Read()) {
+            questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(5)}));
+        }
+        return questions;
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
     }
-    return questions;
 }
 
 NpgsqlConnection getDbConnection() {
