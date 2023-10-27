@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kangan_Quiz_Project", "Kangan_Quiz_Project.csproj", "{A55AAF65-E994-43A5-B9B9-0D337E92BB2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A55AAF65-E994-43A5-B9B9-0D337E92BB2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55AAF65-E994-43A5-B9B9-0D337E92BB2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A55AAF65-E994-43A5-B9B9-0D337E92BB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A55AAF65-E994-43A5-B9B9-0D337E92BB2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8475B7D-B098-4B3D-BD3E-0E8B13B7B763}
+	EndGlobalSection
+EndGlobal
