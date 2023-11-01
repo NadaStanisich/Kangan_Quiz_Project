@@ -11,6 +11,8 @@ app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //
 
 app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
 
+app.MapPost("/questions", (Questions question) => addQuestion(question)); //add question.
+
 app.Run();
 
 Questions getQuestion(int id) {
@@ -74,6 +76,19 @@ bool checkUser(string username) {
         } else {
             return false;
         }
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return false;
+    }
+}
+
+bool addQuestion(Questions question) {
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand($"INSERT INTO \"Quizzes\" (\"id\", \"question\", \"correctOption1\", \"option2\", \"option3\", \"option4\") VALUES ({question.Id}, '{question.Question}', '{question.Options[0]}', '{question.Options[1]}', '{question.Options[2]}', '{question.Options[3]}')", connection);
+        command.ExecuteNonQuery();
+        return true;
     } catch (Exception ex) {
         Console.WriteLine($"An error occurred: {ex.Message}");
         return false;
