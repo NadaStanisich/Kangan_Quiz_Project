@@ -4,6 +4,14 @@ using System.Collections.Generic;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+ // Enable CORS
+        app.UseCors(builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+
 app.MapGet("/", () => "Kangan_Quiz_Project");
 app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id.
 app.MapGet("/questions", () => getQuestions()); //get all questions.
