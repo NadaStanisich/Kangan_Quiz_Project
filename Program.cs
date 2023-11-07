@@ -4,13 +4,7 @@ using System.Collections.Generic;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
- // Enable CORS
-        app.UseCors(builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+
 
 app.MapGet("/", () => "Kangan_Quiz_Project");
 app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id.
@@ -106,3 +100,11 @@ bool addQuestion(Questions question) {
 NpgsqlConnection getDbConnection() {
     return new NpgsqlConnection("User Id=postgres;Password=Th8f9CuFtj_GgE6;Server=db.evcaibnrztyuudacvojx.supabase.co;Port=5432;Database=postgres");
 }
+
+ // Enable CORS
+        app.UseCors(builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
