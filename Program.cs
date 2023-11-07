@@ -2,9 +2,20 @@ using Npgsql;
 using System.Collections.Generic; 
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
-
-
 
 app.MapGet("/", () => "Kangan_Quiz_Project");
 app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id.
@@ -14,6 +25,8 @@ app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //
 app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
 
 app.MapPost("/questions", (Questions question) => addQuestion(question)); //add question.
+
+app.UseCors();
 
 app.Run();
 
@@ -101,10 +114,3 @@ NpgsqlConnection getDbConnection() {
     return new NpgsqlConnection("User Id=postgres;Password=Th8f9CuFtj_GgE6;Server=db.evcaibnrztyuudacvojx.supabase.co;Port=5432;Database=postgres");
 }
 
- // Enable CORS
-        app.UseCors(builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
