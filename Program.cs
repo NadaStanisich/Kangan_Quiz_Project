@@ -17,14 +17,19 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// GET endpoints
 app.MapGet("/", () => "Kangan_Quiz_Project");
 app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id.
 app.MapGet("/questions", () => getQuestions()); //get all questions.
 app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //get all questions with correct option.
-
 app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
 
+//POST endpoints
 app.MapPost("/questions", (Questions question) => addQuestion(question)); //add question.
+app.MapPost("/updateQuestionOptions", (Questions question) => UpdateQuestionOptions(question)); // Update question options
+
+//DELETE endpoints
+app.MapDelete("/questions/{id}", (int id) => removeQuestionById(id)); // Delete a question.
 
 app.UseCors();
 
@@ -109,6 +114,52 @@ bool addQuestion(Questions question) {
         return false;
     }
 }
+
+// remove question by id
+string removeQuestionById(int id) {
+    // Check if the question exists
+    Questions question = getQuestion(id);
+    if (question == null){
+        return $"No question found with ID {id}.";
+    }
+
+    // If the question exists then delete it
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand($"DELETE FROM \"Quizzes\" WHERE \"id\" = {id}", connection);
+        command.ExecuteNonQuery();
+        return $"Question {id} deleted successfully.";
+    } catch (Exception ex) { 
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return "An error occurred.";
+    }
+}
+
+// Update question options
+app.MapPost("/updateQuestionOptions", (Questions question) => UpdateQuestionOptions(question)); // Update question options
+
+Questions UpdateQuestionOptions(Questions question){
+    using var connection = getDbConnection();
+    try{
+        connection.Open();
+        string query = $"UPDATE \"Quizzes\" SET \"correctOption1\" = '{question.Options[0]}', \"option2\" = '{question.Options[1]}', \"option3\" = '{question.Options[2]}', \"option4\" = '{question.Options[3]}' WHERE \"id\" = {question.Id}";
+
+        using (var cmd = new NpgsqlCommand(query, connection)){
+            cmd.Parameters.AddWithValue("correctOption1", question.Options[0]);
+            cmd.Parameters.AddWithValue("option2", question.Options[1]);
+            cmd.Parameters.AddWithValue("option3", question.Options[2]);
+            cmd.Parameters.AddWithValue("option4", question.Options[3]);
+            cmd.ExecuteNonQuery();
+        }
+    }
+    catch (Exception ex){
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
+    }
+    return question;
+}
+
 
 NpgsqlConnection getDbConnection() {
     return new NpgsqlConnection("User Id=postgres;Password=Th8f9CuFtj_GgE6;Server=db.evcaibnrztyuudacvojx.supabase.co;Port=5432;Database=postgres");
