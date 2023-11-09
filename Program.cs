@@ -23,6 +23,26 @@ app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id
 app.MapGet("/questions", () => getQuestions()); //get all questions.
 app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //get all questions with correct option.
 app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
+app.MapGet("get5RandomQuestions", () => get5RandomQuestions()); //get 5 random questions.
+
+    
+List<Questions> get5RandomQuestions() {
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\" ORDER BY random() LIMIT 5", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+        var questions = new List<Questions>();
+        while (reader.Read()) {
+            questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)}));
+        }
+        return questions;
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
+    }
+}
+
 
 //POST endpoints
 app.MapPost("/questions", (Questions question) => addQuestion(question)); //add question.
