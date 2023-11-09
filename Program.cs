@@ -1,5 +1,5 @@
 using Npgsql;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,15 +23,35 @@ app.MapGet("/questions/{id}", (int id) => getQuestion(id)); //get question by id
 app.MapGet("/questions", () => getQuestions()); //get all questions.
 app.MapGet("/questionsCorrectOption", () => getQuestionsWithCorrectOption()); //get all questions with correct option.
 app.MapGet("/users/{username}", (string username) => checkUser(username)); //check if user exists.
-app.MapGet("get5RandomQuestions", () => get5RandomQuestions()); //get 5 random questions.
+//app.MapGet("get5RandomQuestions", () => get5RandomQuestions()); //get 5 random questions.
+app.MapGet("get5RandomQuestions", () => get5RandomQuestions()); //get 5 random questions and answer
 
-    
+List<QuestionAns> get5RandomQuestions() {
+    try {
+        using var connection = getDbConnection();
+        connection.Open();
+        using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\" ORDER BY random() LIMIT 5", connection);
+        using NpgsqlDataReader reader = command.ExecuteReader();
+       
+        var questions = new List<QuestionAns>();
+        while (reader.Read()) {
+            questions.Add(new QuestionAns(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)}));
+        }
+        return questions;
+    } catch (Exception ex) {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+        return null;
+    }
+}
+
+/*    
 List<Questions> get5RandomQuestions() {
     try {
         using var connection = getDbConnection();
         connection.Open();
         using var command = new NpgsqlCommand("SELECT * FROM \"Quizzes\" ORDER BY random() LIMIT 5", connection);
         using NpgsqlDataReader reader = command.ExecuteReader();
+        var correctAnswer = reader.GetString(5);
         var questions = new List<Questions>();
         while (reader.Read()) {
             questions.Add(new Questions(reader.GetInt32(0), reader.GetString(1), new List<string> {reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5)}));
@@ -42,6 +62,9 @@ List<Questions> get5RandomQuestions() {
         return null;
     }
 }
+*/
+
+
 
 
 //POST endpoints
